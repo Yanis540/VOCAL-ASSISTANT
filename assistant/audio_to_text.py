@@ -42,16 +42,3 @@ def transcribe(stream:pyaudio.PyAudio.Stream,p:pyaudio.PyAudio)->dict[str, str |
     return result
 
 
-
-
-
-
-        
-      
-    
-
-
-# print(result["text"])
-# main()
-
-
