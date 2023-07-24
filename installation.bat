@@ -6,3 +6,5 @@ pip install ipython
 pip install openai
 pip install streamlit  streamlit-pills
 pip install load_dotenv
+pip install pysoundfile
+pip install SpeechRecognition
