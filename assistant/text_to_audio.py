@@ -5,7 +5,10 @@ from scipy.io.wavfile import (write as write_wav, read as read_wav)
 import torchaudio
 from pydub import AudioSegment
 from pydub.playback import play
-
+import streamlit as st
+import base64
+from playsound import playsound
+import os 
 torchaudio.set_audio_backend("soundfile")
 os.environ["SUNO_OFFLOAD_CPU"] = "True"
 os.environ["SUNO_USE_SMALL_MODELS"] = "True"
@@ -20,20 +23,21 @@ preload_models(
 )
 
 # generate audio from text
-text_prompt = """
-     Hello, my name is Suno. And, uh — and I like pizza. [laughs] 
-     But I also have other interests such as playing tic tac toe.
+text_prompted = """
+    Hello, my name is Suno. And, uh — and I like pizza. [laughs] 
+    But I also have other interests such as playing tic tac toe.
 """
 
-
-
 def text_to_audio(text_prompt:str) : 
-    
+    if text_prompt.split()=="":
+        return 
+    file_path = "./assistant/audio.wav"
     print("Generating Audio")
-    audio_array = generate_audio(text_prompt)
-    print("Audio Generated")
-    print("Playing")
-    write_wav("./assistant/audio.wav", SAMPLE_RATE, audio_array)
-    print("Finished Playing")
+    audio_array = generate_audio(f"YOUNG BLONDE WOMAN : {text_prompt}",silent=True)
+    write_wav(file_path, SAMPLE_RATE, audio_array)
+    playsound(file_path)
+    if os.path.exists(file_path): 
+        os.remove(file_path)
     return audio_array
-# text_to_audio(text_prompt)
+# text_to_audio(text_prompted)
+# play_audio()

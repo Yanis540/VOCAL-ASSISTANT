@@ -1,31 +1,31 @@
+import speech_recognition as sr
+from audio_to_LLM_text import ask,write_terminal_without_space
+import warnings
+warnings.filterwarnings("ignore", message=".*The 'nopython' keyword.*")
+recognizer = sr.Recognizer()
 
-import pyaudio 
-import os 
-from .audio_to_text import (
-    transcribe, FORMAT,CHANNELS,RATE,SECONDS,CHUNK,file_dir
-)
-def main(): 
-    
-    # we have to record our salves here 
-    try:
-        p  = pyaudio.PyAudio()
-        stream = p.open(format =FORMAT , channels=CHANNELS , rate = RATE , 
-            input=True , frames_per_buffer=CHUNK
-        ) 
-        print("Microphone opened ")
-        while True :
-            print(f"Starting for {SECONDS} seconds ")
-            result = transcribe(stream,p)
-            print(result["text"])
-    except Exception as e :
-        print("Error Occured " , str(e))
-    finally : 
-        if stream : 
-            stream.stop_stream()
-            stream.close()
-        if p : 
-            p.terminate()
-
-        if os.path.exists(file_dir): 
-            os.remove(file_dir)
+def listen(): 
+    mic = sr.Microphone(device_index=0)
+    with mic as source : 
+        print("Lisa : Hello how can i help you ?")
         
+        while True : 
+            try:
+                #! Audio -> Text 
+                write_terminal_without_space("You : ")
+                audio_data = recognizer.listen(source)
+                detected_audio_text = str(recognizer.recognize_whisper(audio_data,model="small"))
+                if detected_audio_text is None or detected_audio_text.strip() =="": 
+                    print()
+                    continue 
+                write_terminal_without_space(f"{detected_audio_text}")
+                print()
+                #! LLM 
+                #! Text -> Audio : Not Working  
+                ask(question=detected_audio_text,selected="Streaming",is_terminal=True)
+            except Exception as e: 
+                print(str(e))
+                print("Unrocognized voice ")
+                print()
+
+listen()
