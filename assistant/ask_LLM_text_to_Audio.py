@@ -15,6 +15,7 @@ PROMPT = f"""
     You Are a vocal assistant named {vocal_assistant_name}, 
     you will answer  be provided with brief statements. 
     If you don't understand simply ask to repeat the question. Answer only the last question.
+    And Sometimes relaunch the conversation by asking questions
 """
 prompt_message = {
     "role": "system",
@@ -78,17 +79,19 @@ def ask_stream(question: str,is_terminal:Union[bool,None]):
         if answer.strip() == "" : 
             continue
         report.append(answer)
-        #! Listen to audio
-        # text_to_audio(answer)
-        #! Display result to the box 
-        full_answer = "".join(report).strip()
-        full_answer = full_answer.replace("\n", "")
-        write_to_output(answer if is_terminal is True else full_answer,is_terminal)
+    #! Listen to Full Audio
+    full_answer = "".join(report).strip()
+    full_answer = full_answer.replace("\n", "")
+    text_to_audio(full_answer) 
+    #! Display result to the box 
+    if is_terminal == True:
+        for answer in report :
+            write_to_output(answer,is_terminal)
+    else : 
+        write_to_output(full_answer,is_terminal)
     print()
     return full_answer  
 
-# ask_stream("")
- 
 
     
 def ask(question:str,selected,is_terminal:Union[bool,None]): 
@@ -98,4 +101,3 @@ def ask(question:str,selected,is_terminal:Union[bool,None]):
         ask_without_stream(question,is_terminal)
             
 # ask("What's your name ?","Streaming",True)        
-# : RUN SERVER  : streamlit run d:\Yanis\Développement\Mobile\Practice\2-VOCAL-ASSITANT\assistant\large_language_model.py

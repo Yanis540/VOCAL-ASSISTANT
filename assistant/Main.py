@@ -1,6 +1,7 @@
 import speech_recognition as sr
-from audio_to_LLM_text import ask,write_terminal_without_space
+from ask_LLM_text_to_Audio import ask,write_terminal_without_space
 import warnings
+from audio_to_text import audio_to_text
 warnings.filterwarnings("ignore", message=".*The 'nopython' keyword.*")
 recognizer = sr.Recognizer()
 
@@ -13,15 +14,14 @@ def listen():
             try:
                 #! Audio -> Text 
                 write_terminal_without_space("You : ")
-                audio_data = recognizer.listen(source)
-                detected_audio_text = str(recognizer.recognize_whisper(audio_data,model="small"))
+                detected_audio_text = audio_to_text(source,recognizer)
                 if detected_audio_text is None or detected_audio_text.strip() =="": 
                     print()
                     continue 
                 write_terminal_without_space(f"{detected_audio_text}")
                 print()
                 #! LLM 
-                #! Text -> Audio : Not Working  
+                #! Text -> Audio   
                 ask(question=detected_audio_text,selected="Streaming",is_terminal=True)
             except Exception as e: 
                 print(str(e))
